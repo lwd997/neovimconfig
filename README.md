@@ -1,1 +1,1 @@
-### fork of ThePrimeagen's neovim config
+### not a fork anymore, it's a philosophy now.
