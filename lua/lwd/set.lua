@@ -1,6 +1,6 @@
 vim.opt.guicursor = ""
 
-vim.api.nvim_set_option("clipboard","unnamed")
+vim.opt.clipboard = { "unnamed", "unnamedplus" }
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
