@@ -29,7 +29,7 @@ autocmd('TextYankPost', {
     end,
 })
 
-autocmd({"BufWritePre"}, {
+autocmd({ "BufWritePre" }, {
     group = GroupOne,
     pattern = "*",
     command = [[%s/\s\+$//e]],
@@ -51,6 +51,10 @@ autocmd('LspAttach', {
         vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
     end
 })
+
+vim.api.nvim_create_user_command("Format", function()
+    vim.lsp.buf.format({ async = true })
+end, {})
 
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
