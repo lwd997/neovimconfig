@@ -1,12 +1,13 @@
 require("lwd.set")
+require("lwd.util")
 require("lwd.remap")
 require("lwd.lazy_init")
 
 local augroup = vim.api.nvim_create_augroup
-local GroupOne = augroup('GroupOne', {})
+local GroupOne = augroup("GroupOne", {})
 
 local autocmd = vim.api.nvim_create_autocmd
-local yank_group = augroup('HighlightYank', {})
+local yank_group = augroup("HighlightYank", {})
 
 function R(name)
     require("plenary.reload").reload_module(name)
@@ -14,16 +15,16 @@ end
 
 vim.filetype.add({
     extension = {
-        templ = 'templ',
+        templ = "templ",
     }
 })
 
-autocmd('TextYankPost', {
+autocmd("TextYankPost", {
     group = yank_group,
-    pattern = '*',
+    pattern = "*",
     callback = function()
         vim.highlight.on_yank({
-            higroup = 'IncSearch',
+            higroup = "IncSearch",
             timeout = 40,
         })
     end,
@@ -35,7 +36,7 @@ autocmd({ "BufWritePre" }, {
     command = [[%s/\s\+$//e]],
 })
 
-autocmd('LspAttach', {
+autocmd("LspAttach", {
     group = GroupOne,
     callback = function(e)
         local opts = { buffer = e.buf }
@@ -52,8 +53,26 @@ autocmd('LspAttach', {
     end
 })
 
+autocmd("colorscheme", {
+    callback = function(args)
+        SetTxtConfigEntry("ColorScheme", args.match)
+    end,
+})
+
 vim.api.nvim_create_user_command("Format", function()
     vim.lsp.buf.format({ async = true })
+end, {})
+
+vim.api.nvim_create_user_command("BGToggle", function()
+    vim.cmd.colorscheme(GetTxtConfigEntry("ColorScheme", "kanagawabones"))
+
+    if (vim.o.background == "light") then
+        vim.opt.background = "dark"
+    else
+        vim.opt.background = "light"
+    end
+
+    SetTxtConfigEntry("Background", vim.o.background)
 end, {})
 
 vim.g.netrw_browse_split = 0
