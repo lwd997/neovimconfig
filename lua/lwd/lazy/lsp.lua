@@ -17,7 +17,21 @@ return {
     config = function()
         require("conform").setup({
             formatters_by_ft = {
-            }
+                css = { "prettier" },
+                html = { "prettier" },
+                scss = { "prettier" },
+                json = { "prettier" },
+            },
+            formatters = {
+                prettier = {
+                    prepend_args = function()
+                        return {
+                            "--use-tabs", vim.o.expandtab and "false" or "true",
+                            "--tab-width", tostring(vim.o.shiftwidth),
+                        }
+                    end,
+                },
+            },
         })
         local cmp = require('cmp')
         local cmp_lsp = require("cmp_nvim_lsp")
@@ -32,7 +46,6 @@ return {
         require("mason-lspconfig").setup({
             ensure_installed = {
                 "lua_ls",
-                "rust_analyzer",
                 "gopls",
             },
             handlers = {
@@ -56,7 +69,6 @@ return {
                     })
                     vim.g.zig_fmt_parse_errors = 0
                     vim.g.zig_fmt_autosave = 0
-
                 end,
                 ["lua_ls"] = function()
                     local lspconfig = require("lspconfig")
@@ -66,9 +78,16 @@ return {
                             Lua = {
                                 runtime = { version = "Lua 5.1" },
                                 diagnostics = {
-                                    globals = { "bit", "vim", "it", "describe", "before_each", "after_each" },
+                                    globals = { "bit", "vim", "it", "describe", "before_each", "after_each", },
                                 }
-                            }
+                            },
+                            workspace = {
+                                library = {
+                                    [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                                    [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+                                }
+                            },
+                            telemetry = { enable = false },
                         }
                     }
                 end,

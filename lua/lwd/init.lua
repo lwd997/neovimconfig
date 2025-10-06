@@ -59,9 +59,16 @@ autocmd("colorscheme", {
     end,
 })
 
-vim.api.nvim_create_user_command("Format", function()
-    vim.lsp.buf.format({ async = true })
-end, {})
+vim.api.nvim_create_user_command("Format", function(args)
+    require("conform").format({
+        async = true,
+        lsp_fallback = true,
+        range = args.count ~= -1 and {
+            start = { args.line1, 0 },
+            ["end"] = { args.line2, 0 },
+        } or nil,
+    })
+end, { range = true })
 
 vim.api.nvim_create_user_command("BGToggle", function()
     vim.cmd.colorscheme(GetTxtConfigEntry("ColorScheme", "kanagawabones"))
@@ -78,3 +85,9 @@ end, {})
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
+
+local resizeRemapOpts = { noremap = true, silent = true }
+vim.api.nvim_set_keymap('n', '<C-4>', ':resize +1<CR>', resizeRemapOpts)
+vim.api.nvim_set_keymap('n', '<C-3>', ':resize -1<CR>', resizeRemapOpts)
+vim.api.nvim_set_keymap('n', '<C-2>', ':vertical resize -1<CR>', resizeRemapOpts)
+vim.api.nvim_set_keymap('n', '<C-1>', ':vertical resize +1<CR>', resizeRemapOpts)
