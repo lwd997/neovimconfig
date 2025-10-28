@@ -1,6 +1,5 @@
 require("lwd.set")
 require("lwd.util")
-require("lwd.remap")
 require("lwd.lazy_init")
 
 local augroup = vim.api.nvim_create_augroup
@@ -70,6 +69,9 @@ vim.api.nvim_create_user_command("Format", function(args)
     })
 end, { range = true })
 
+vim.api.nvim_create_user_command("Camel", Camel, { range = true })
+vim.api.nvim_create_user_command("Snake", Snake, { range = true })
+
 vim.api.nvim_create_user_command("BGToggle", function()
     vim.cmd.colorscheme(GetTxtConfigEntry("ColorScheme", "kanagawabones"))
 
@@ -81,10 +83,6 @@ vim.api.nvim_create_user_command("BGToggle", function()
 
     SetTxtConfigEntry("Background", vim.o.background)
 end, {})
-
-vim.g.netrw_browse_split = 0
-vim.g.netrw_banner = 0
-vim.g.netrw_winsize = 25
 
 local resizeRemapOpts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap('n', '<C-4>', ':resize +1<CR>', resizeRemapOpts)

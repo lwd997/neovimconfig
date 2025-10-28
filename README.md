@@ -6,9 +6,16 @@
 :Mason # - open lsp and formatter installer
 ```
 
-
 ```sh
 :BGToggle # - toggle background light/dark *not all themes support multiple backgrounds*
+```
+
+```sh
+:Camel # - transform selection to camel case
+```
+
+```sh
+:Snake # - transform selection to snake case
 ```
 
 > show problems
