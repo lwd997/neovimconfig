@@ -8,16 +8,6 @@ local GroupOne = augroup("GroupOne", {})
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup("HighlightYank", {})
 
-function R(name)
-    require("plenary.reload").reload_module(name)
-end
-
-vim.filetype.add({
-    extension = {
-        templ = "templ",
-    }
-})
-
 autocmd("TextYankPost", {
     group = yank_group,
     pattern = "*",
@@ -27,12 +17,6 @@ autocmd("TextYankPost", {
             timeout = 40,
         })
     end,
-})
-
-autocmd({ "BufWritePre" }, {
-    group = GroupOne,
-    pattern = "*",
-    command = [[%s/\s\+$//e]],
 })
 
 autocmd("LspAttach", {
@@ -89,3 +73,6 @@ vim.api.nvim_set_keymap('n', '<C-4>', ':resize +1<CR>', resizeRemapOpts)
 vim.api.nvim_set_keymap('n', '<C-3>', ':resize -1<CR>', resizeRemapOpts)
 vim.api.nvim_set_keymap('n', '<C-2>', ':vertical resize -1<CR>', resizeRemapOpts)
 vim.api.nvim_set_keymap('n', '<C-1>', ':vertical resize +1<CR>', resizeRemapOpts)
+
+vim.api.nvim_set_keymap('n', '<M-n>', ':cnext<CR>', {})
+vim.api.nvim_set_keymap('n', '<M-p>', ':cprev<CR>', {})
