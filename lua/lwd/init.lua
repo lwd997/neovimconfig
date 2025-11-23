@@ -3,13 +3,13 @@ require("lwd.util")
 require("lwd.lazy_init")
 
 local augroup = vim.api.nvim_create_augroup
-local GroupOne = augroup("GroupOne", {})
-
 local autocmd = vim.api.nvim_create_autocmd
-local yank_group = augroup("HighlightYank", {})
+
+local group_highlight_yank = augroup("highlight_yank", {})
+local group_lsp_attach = augroup("lsp_attach", {})
 
 autocmd("TextYankPost", {
-    group = yank_group,
+    group = group_highlight_yank,
     pattern = "*",
     callback = function()
         vim.highlight.on_yank({
@@ -19,8 +19,10 @@ autocmd("TextYankPost", {
     end,
 })
 
+vim.api.nvim_set_hl(0, "ColorColumn", { link = "Visual" })
+
 autocmd("LspAttach", {
-    group = GroupOne,
+    group = group_lsp_attach,
     callback = function(e)
         local opts = { buffer = e.buf }
         vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
