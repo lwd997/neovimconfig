@@ -13,6 +13,6 @@ return {
             -- Available modes: foreground, background
             mode     = 'background', -- Set the display mode.
         } ]]--
-        require("colorizer").setup({ '*' }, { mode = "foreground" })
+        require("colorizer").setup({ '*' }, { mode = "background" })
     end
 }
