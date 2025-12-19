@@ -1,11 +1,15 @@
-local configPath = vim.fn.stdpath("config")
-local txtConfigPath = configPath .. "/TxtConfig.txt"
+local config_path = vim.fn.stdpath("config")
+local txt_config_path = config_path .. "/TxtConfig.txt"
 
----@param entry_name string
----@param fallback_value string
----@return string
+function GetConfigBasePath()
+    return config_path
+end
+
+--- @param entry_name string
+--- @param fallback_value string
+--- @return string
 function GetTxtConfigEntry(entry_name, fallback_value)
-    local lines = vim.fn.readfile(txtConfigPath)
+    local lines = vim.fn.readfile(txt_config_path)
 
     for _, line in ipairs(lines) do
         if line:match("^" .. entry_name) then
@@ -19,10 +23,10 @@ function GetTxtConfigEntry(entry_name, fallback_value)
     return fallback_value
 end
 
----@param entry_name string
----@param entry_value string
+--- @param entry_name string
+--- @param entry_value string
 function SetTxtConfigEntry(entry_name, entry_value)
-    local lines = vim.fn.readfile(configPath .. "/TxtConfig.txt")
+    local lines = vim.fn.readfile(config_path .. "/TxtConfig.txt")
     local updated = {}
 
     for _, line in ipairs(lines) do
@@ -32,9 +36,9 @@ function SetTxtConfigEntry(entry_name, entry_value)
         table.insert(updated, line)
     end
 
-    local f = io.open(txtConfigPath, "w")
+    local f = io.open(txt_config_path, "w")
     if not f then
-        error("Cannot write to file: " .. txtConfigPath)
+        error("Cannot write to file: " .. txt_config_path)
     end
 
     for _, updLine in ipairs(updated) do
@@ -44,26 +48,37 @@ function SetTxtConfigEntry(entry_name, entry_value)
 end
 
 function GetVisualSelection()
-    local selectionStart = vim.api.nvim_buf_get_mark(0, "<")
-    local selectionEnd   = vim.api.nvim_buf_get_mark(0, ">")
+    local selection_start = vim.api.nvim_buf_get_mark(0, "<")
+    local selection_end   = vim.api.nvim_buf_get_mark(0, ">")
 
-    local startLine      = selectionStart[1] - 1
-    local startCol       = selectionStart[2]
-    local endLine        = selectionEnd[1] - 1
-    local endCol         = selectionEnd[2]
+    local start_line      = selection_start[1] - 1
+    local start_col       = selection_start[2]
+    local end_line        = selection_end[1] - 1
+    local end_col         = selection_end[2]
 
-    local lines          = vim.api.nvim_buf_get_text(0, startLine, startCol, endLine, endCol, {})
-    local text           = table.concat(lines, "\n")
+    local lines           = vim.api.nvim_buf_get_text(
+        0,
+        start_line,
+        start_col,
+        end_line,
+        end_col,
+        {})
+
+    local text            = table.concat(lines, "\n")
 
     return {
         text     = text,
         measures = {
-            startLine = startLine,
-            startCol = startCol,
-            endLine = endLine,
-            endCol = endCol
+            start_line = start_line,
+            start_col = start_col,
+            end_line = end_line,
+            end_col = end_col
         }
     }
+end
+
+function GetWordUnderCursor()
+    return vim.fn.expand("<cword>")
 end
 
 --- @param str string
@@ -85,10 +100,10 @@ function Camel()
 
     vim.api.nvim_buf_set_text(
         0,
-        s.measures.startLine,
-        s.measures.startCol,
-        s.measures.endLine,
-        s.measures.endCol,
+        s.measures.start_line,
+        s.measures.start_col,
+        s.measures.end_line,
+        s.measures.end_col,
         Split(camel, "\n"))
 end
 
@@ -100,9 +115,68 @@ function Snake()
 
     vim.api.nvim_buf_set_text(
         0,
-        s.measures.startLine,
-        s.measures.startCol,
-        s.measures.endLine,
-        s.measures.endCol,
+        s.measures.start_line,
+        s.measures.start_col,
+        s.measures.end_line,
+        s.measures.end_col,
         Split(snake, "\n"))
+end
+
+--- @param lang string
+--- @param entry string
+function AddSpellEntry(lang, entry)
+    local spell_dir_path = config_path .. "/spell"
+
+    if vim.fn.filewritable(spell_dir_path) ~= 2 then
+        vim.fn.mkdir(spell_dir_path)
+    end
+
+    local spell_file_path = spell_dir_path .. "/" .. lang .. ".utf-8.add"
+    local lang_before = vim.opt.spelllang:get()
+    local spell_file_before = vim.opt.spellfile
+
+    vim.opt.spellfile = spell_file_path
+    vim.opt.spelllang = { lang }
+
+    vim.cmd("silent! spellgood " .. entry)
+    vim.cmd("silent! mkspell " .. spell_file_path)
+
+    vim.opt.spellfile = spell_file_before
+    vim.opt.spelllang = lang_before
+
+    print(entry .. " -> " .. lang)
+end
+
+--- @class AddSpellOpts
+--- @field is_visual_mode boolean
+
+--- @param lang string
+--- @param opts AddSpellOpts
+function AddSpellFromEditor(lang, opts)
+    local spell_entry = ""
+
+    if opts.is_visual_mode then
+        spell_entry = GetVisualSelection().text
+        spell_entry = vim.fn.trim(spell_entry)
+    else
+        spell_entry = GetWordUnderCursor()
+    end
+
+    if spell_entry == "" then
+        print("Cannot add whitespace to spellfile")
+        return
+    end
+
+    vim.ui.input(
+        {
+            prompt =
+                "Add '" .. spell_entry .. "' to " .. lang .. "?\n" ..
+                "Enter or 'y' to confirm, any other input to abort\n"
+        },
+        function(input)
+            if input == "" or input == "y" then
+                AddSpellEntry(lang, spell_entry)
+            end
+        end
+    )
 end

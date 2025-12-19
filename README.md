@@ -1,5 +1,5 @@
 ```sh
-:Format # - format cuurent buffer with installed formatter
+:Format # - format current buffer with installed formatter
 ```
 
 ```sh
@@ -18,13 +18,21 @@
 :Snake # - transform selection to snake case
 ```
 
+```sh
+:SpellAdd # - add word under cursor or visual selection to en spellfile
+```
+
+```sh
+:SpellAddRu # - add word under cursor or visual selection to ru spellfile
+```
+
 > show problems
 > `<leader> -> t -> t`
 
 > show undo tree
 > `<leader> -> u`
 
-> search by filemname
+> search by filename
 > `<ctrl> + p`
 
 > search by file content

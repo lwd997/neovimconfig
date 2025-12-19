@@ -70,6 +70,14 @@ vim.api.nvim_create_user_command("BGToggle", function()
     SetTxtConfigEntry("Background", vim.o.background)
 end, {})
 
+vim.api.nvim_create_user_command("SpellAdd", function(opts)
+    AddSpellFromEditor("en", { is_visual_mode = opts.count ~= -1 })
+end, { range = true })
+
+vim.api.nvim_create_user_command("SpellAddRu", function(opts)
+    AddSpellFromEditor("ru", { is_visual_mode = opts.count ~= -1 })
+end, { range = true })
+
 local resizeRemapOpts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap('n', '<C-4>', ':resize +1<CR>', resizeRemapOpts)
 vim.api.nvim_set_keymap('n', '<C-3>', ':resize -1<CR>', resizeRemapOpts)
