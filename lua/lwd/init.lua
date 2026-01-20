@@ -86,3 +86,4 @@ vim.api.nvim_set_keymap('n', '<C-1>', ':vertical resize +1<CR>', resizeRemapOpts
 
 vim.api.nvim_set_keymap('n', '<M-n>', ':cnext<CR>', {})
 vim.api.nvim_set_keymap('n', '<M-p>', ':cprev<CR>', {})
+
