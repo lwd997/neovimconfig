@@ -1,2 +1,0 @@
-ColorScheme:zenbones
-Background:dark

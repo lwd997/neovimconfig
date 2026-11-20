@@ -1,8 +1,6 @@
 return {
     "nvim-telescope/telescope.nvim",
 
-    tag = "0.1.8",
-
     dependencies = {
         "nvim-lua/plenary.nvim",
         {
@@ -24,6 +22,7 @@ return {
         local sorters = require("telescope.sorters")
         local make_entry = require("telescope.make_entry")
         local config = require("telescope.config").values
+
 
         local function smart_grep(opts)
             opts = opts or {}

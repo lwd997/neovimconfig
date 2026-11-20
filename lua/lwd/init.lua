@@ -4,6 +4,7 @@ require("lwd.lazy_init")
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
+local cfg = require("lwd.config_tool");
 
 local group_highlight_yank = augroup("highlight_yank", {})
 local group_lsp_attach = augroup("lsp_attach", {})
@@ -32,17 +33,18 @@ autocmd("LspAttach", {
         vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
         vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
         vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-        vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-        vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-        vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
     end
 })
 
 autocmd("colorscheme", {
     callback = function(args)
-        SetTxtConfigEntry("ColorScheme", args.match)
+        cfg:set_settings_entry("colorscheme", args.match)
     end,
 })
+
+vim.api.nvim_create_user_command("Explore", function()
+    vim.cmd("Oil")
+end, { range = false })
 
 vim.api.nvim_create_user_command("Format", function(args)
     require("conform").format({
@@ -59,15 +61,14 @@ vim.api.nvim_create_user_command("Camel", Camel, { range = true })
 vim.api.nvim_create_user_command("Snake", Snake, { range = true })
 
 vim.api.nvim_create_user_command("BGToggle", function()
-    vim.cmd.colorscheme(GetTxtConfigEntry("ColorScheme", "kanagawabones"))
-
+    -- vim.cmd.colorscheme(cfg:get_settings_entry("colorscheme", "kanagawabones"))
     if (vim.o.background == "light") then
         vim.opt.background = "dark"
     else
         vim.opt.background = "light"
     end
 
-    SetTxtConfigEntry("Background", vim.o.background)
+    cfg:set_settings_entry("background", vim.o.background)
 end, {})
 
 vim.api.nvim_create_user_command("SpellAdd", function(opts)
@@ -86,4 +87,3 @@ vim.api.nvim_set_keymap('n', '<C-1>', ':vertical resize +1<CR>', resizeRemapOpts
 
 vim.api.nvim_set_keymap('n', '<M-n>', ':cnext<CR>', {})
 vim.api.nvim_set_keymap('n', '<M-p>', ':cprev<CR>', {})
-

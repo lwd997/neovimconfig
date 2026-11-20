@@ -12,27 +12,14 @@ return {
         "L3MON4D3/LuaSnip",
         "saadparwaiz1/cmp_luasnip",
         "j-hui/fidget.nvim",
+        {
+            "folke/lazydev.nvim",
+            ft = "lua",
+            opts = {}
+        }
     },
 
     config = function()
-        require("conform").setup({
-            formatters_by_ft = {
-                css = { "prettier" },
-                html = { "prettier" },
-                scss = { "prettier" },
-                json = { "prettier" },
-            },
-            formatters = {
-                prettier = {
-                    prepend_args = function()
-                        return {
-                            "--use-tabs", vim.o.expandtab and "false" or "true",
-                            "--tab-width", tostring(vim.o.shiftwidth),
-                        }
-                    end,
-                },
-            },
-        })
         local cmp = require('cmp')
         local cmp_lsp = require("cmp_nvim_lsp")
         local capabilities = vim.tbl_deep_extend(
@@ -45,8 +32,7 @@ return {
         require("mason").setup()
         require("mason-lspconfig").setup({
             ensure_installed = {
-                "lua_ls",
-                "gopls",
+                "lua_ls"
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -55,21 +41,6 @@ return {
                     }
                 end,
 
-                zls = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.zls.setup({
-                        root_dir = lspconfig.util.root_pattern(".git", "build.zig", "zls.json"),
-                        settings = {
-                            zls = {
-                                enable_inlay_hints = true,
-                                enable_snippets = true,
-                                warn_style = true,
-                            },
-                        },
-                    })
-                    vim.g.zig_fmt_parse_errors = 0
-                    vim.g.zig_fmt_autosave = 0
-                end,
                 ["lua_ls"] = function()
                     local lspconfig = require("lspconfig")
                     lspconfig.lua_ls.setup {
@@ -77,9 +48,6 @@ return {
                         settings = {
                             Lua = {
                                 runtime = { version = "Lua 5.1" },
-                                diagnostics = {
-                                    globals = { "bit", "vim", "it", "describe", "before_each", "after_each", },
-                                }
                             },
                             workspace = {
                                 library = {
@@ -110,7 +78,7 @@ return {
             }),
             sources = cmp.config.sources({
                 { name = 'nvim_lsp' },
-                { name = 'luasnip' }, -- For luasnip users.
+                --    { name = 'luasnip' }, -- For luasnip users.
             }, {
                 { name = 'buffer' },
             })

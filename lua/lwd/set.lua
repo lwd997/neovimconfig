@@ -1,7 +1,9 @@
+vim.g.deprecation_warnings = false
 vim.g.mapleader = ","
 vim.opt.guicursor = ""
 
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
+vim.o.ignorecase = true
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
